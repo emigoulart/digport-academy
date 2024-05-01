@@ -68,14 +68,6 @@ func criaEstoque() []model.Produto {
 		},
 	}
 
-	/*
-		type Estoque map[string]model.Produto
-		qtdInicialProdutos :=
-		estoque := make(map[string]model.Produto, qtdInicialProdutos)
-		estoque := make(Estoque, qtdInicialProdutos)
-		estoque2["1"] = model.Produto{ID: "1", Nome: "Revista Recreio", Preco: 19.90, Descricao: "Revista Recreio", Imagem: "revista.jpg"}
-	*/
-
 	estoque := make([]model.Produto, len(produtos))
 
 	return estoque
