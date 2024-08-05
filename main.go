@@ -3,9 +3,12 @@ package main
 import "fmt"
 
 func main() {
-	// uuid := uuid.NewString()
-	// fmt.Println(uuid)
 
-	fmt.Println("Bem vindo(a) à loja DigPort!")
+	var nome string
+	fmt.Printf("Olá, digite o ser nome: ")
+
+	fmt.Scan(&nome)
+
+	fmt.Printf("Bem vinda, %s", nome)
 
 }
