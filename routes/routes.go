@@ -11,5 +11,6 @@ func HandleRequests() {
 	route := mux.NewRouter()
 	route.HandleFunc("/produtos", controllers.BuscaProdutosHandler).Methods("GET")
 	route.HandleFunc("/produto", controllers.BuscaProdutoPorNomeHandler).Methods("GET")
-	http.ListenAndServe(":8080", route)
+	route.HandleFunc("/produto", controllers.AdicionaProdutoHandler).Methods("POST")
+	http.ListenAndServe(":8085", route)
 }

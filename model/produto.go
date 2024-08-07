@@ -1,6 +1,12 @@
 package model
 
-import "github.com/emigoulart/digport-academy/db"
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/emigoulart/digport-academy/db"
+	"github.com/google/uuid"
+)
 
 type Produto struct {
 	ID                  string  `json:"id"`
@@ -69,4 +75,30 @@ func BuscaProdutoPorNome(nomeProduto string) Produto {
 	defer db.Close()
 	return p
 
+}
+
+func CriaProduto(prod Produto) {
+	//nome, descricao string, preco float64, image string, quantidade int
+	db := db.ConectaBancoDados()
+	id := uuid.NewString()
+	nome := prod.Nome
+	preco := prod.Preco
+	descricao := prod.Descricao
+	imagem := prod.Imagem
+	quantidade := prod.QuantidadeEmEstoque
+
+	result, err := db.Exec("INSERT INTO produtos VALUES($1, $2, $3, $4, $5, $6)", id, nome, strconv.FormatFloat(preco, 'f', 1, 64), descricao, imagem, strconv.Itoa(quantidade))
+	if err != nil {
+		panic(err.Error())
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		//http.Error(w, http.StatusText(500), 500)
+		panic(err.Error())
+		//return
+	}
+
+	fmt.Printf("Products %s created successfully (%d row affected)\n", id, rowsAffected)
+
+	defer db.Close()
 }
