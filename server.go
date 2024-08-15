@@ -5,6 +5,5 @@ import (
 )
 
 func StartServer() {
-	//http.HandleFunc("/produtos", controllers.BuscaProdutos)
 	routes.HandleRequests()
 }
