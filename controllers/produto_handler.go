@@ -22,7 +22,7 @@ func BuscaProdutoPorNomeHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func AdicionaProdutoHandler(w http.ResponseWriter, r *http.Request) {
+func CriaProdutoHandler(w http.ResponseWriter, r *http.Request) {
 	var produto model.Produto
 	json.NewDecoder(r.Body).Decode(&produto)
 
@@ -41,15 +41,5 @@ func RemoveProdutoHandler(w http.ResponseWriter, r *http.Request) {
 	// the product to be removed should be passed as a parameter in the request body
 	// the function should return a status code 204 if the product was removed successfully, no content
 	// or a status code 404 if the product was not found
-	var produto model.Produto
-	json.NewDecoder(r.Body).Decode(&produto)
-
-	error := model.RemoveProduto(produto.ID)
-
-	if error != nil {
-		w.WriteHeader(http.StatusNotFound)
-	} else {
-		w.WriteHeader(http.StatusNoContent)
-	}
 
 }

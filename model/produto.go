@@ -83,6 +83,12 @@ func populaProduto() Produto {
 
 func CriaProduto(prod Produto) error {
 	//nome, descricao string, preco float64, image string, quantidade int
+
+	if produtoCadastrado(prod.Nome) {
+		fmt.Printf("Produto já cadastrado: %s\n", prod.Nome)
+		return fmt.Errorf("Produto já cadastrado")
+	}
+
 	db := db.ConectaBancoDados()
 	id := uuid.NewString()
 	nome := prod.Nome
@@ -91,13 +97,9 @@ func CriaProduto(prod Produto) error {
 	imagem := prod.Imagem
 	quantidade := prod.QuantidadeEmEstoque
 
-	if produtoCadastrado(nome) {
-		fmt.Printf("Produto já cadastrado: %s\n", nome)
-		return fmt.Errorf("Produto já cadastrado")
-	}
+	strInsert := "INSERT INTO produtos VALUES($1, $2, $3, $4, $5, $6)"
 
-	result, err := db.Exec("INSERT INTO produtos VALUES($1, $2, $3, $4, $5, $6)", id, nome,
-		strconv.FormatFloat(preco, 'f', 1, 64), descricao, imagem, strconv.Itoa(quantidade))
+	result, err := db.Exec(strInsert, id, nome, strconv.FormatFloat(preco, 'f', 1, 64), descricao, imagem, strconv.Itoa(quantidade))
 	if err != nil {
 		panic(err.Error())
 	}
