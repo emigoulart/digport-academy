@@ -83,13 +83,13 @@ func populaProduto() Produto {
 
 func CriaProduto(prod Produto) error {
 	//nome, descricao string, preco float64, image string, quantidade int
-
 	if produtoCadastrado(prod.Nome) {
 		fmt.Printf("Produto já cadastrado: %s\n", prod.Nome)
 		return fmt.Errorf("Produto já cadastrado")
 	}
 
 	db := db.ConectaBancoDados()
+	defer db.Close()
 	id := uuid.NewString()
 	nome := prod.Nome
 	preco := prod.Preco
@@ -110,8 +110,6 @@ func CriaProduto(prod Produto) error {
 
 	fmt.Printf("Produto %s criado com sucesso (%d row affected)\n", id, rowsAffected)
 
-	defer db.Close()
-
 	return nil
 }
 
@@ -125,6 +123,7 @@ func produtoCadastrado(nomeProduto string) bool {
 
 func RemoveProduto(id string) error {
 	db := db.ConectaBancoDados()
+	defer db.Close()
 
 	result, err := db.Exec("DELETE FROM produtos WHERE id = $1", id)
 	if err != nil {
@@ -136,12 +135,38 @@ func RemoveProduto(id string) error {
 	}
 
 	if rowsAffected == 0 {
-		return err
+		return fmt.Errorf("produto não encontrado")
 	}
 
 	fmt.Printf("Produto %s deletado com sucesso (%d row affected)\n", id, rowsAffected)
 
+	return nil
+}
+
+func UpdateProduto(prod Produto) error {
+	db := db.ConectaBancoDados()
 	defer db.Close()
+	id := prod.ID
+	nome := prod.Nome
+	//preco := prod.Preco
+	descricao := prod.Descricao
+	//imagem := prod.Imagem
+	//quantidade := prod.QuantidadeEmEstoque
+
+	result, err := db.Exec("UPDATE produtos SET nome= $1, descricao= $2 where id= $3", nome, descricao, id)
+	if err != nil {
+		panic(err.Error())
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("produto não encontrado")
+	}
+
+	fmt.Printf("Produto %s atualizado com sucesso (%d row affected)\n", id, rowsAffected)
 
 	return nil
 }
