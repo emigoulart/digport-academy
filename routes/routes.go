@@ -14,5 +14,8 @@ func HandleRequests() {
 	route.HandleFunc("/produto", controllers.CriaProdutoHandler).Methods("POST")
 	route.HandleFunc("/produto/{id}", controllers.RemoveProdutoHandler).Methods("DELETE")
 	//	route.HandleFunc("/produto", controllers.AtualizaProdutoHandler).Methods("PUT")
+
+	route.HandleFunc("/usuarios", controllers.CriarUsuarioHandler).Methods("POST")
+
 	http.ListenAndServe(":8085", route)
 }
