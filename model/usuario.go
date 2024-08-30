@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+
 	"github.com/emigoulart/digport-academy/db"
 
 	"golang.org/x/crypto/bcrypt"
@@ -13,6 +15,19 @@ type Usuario struct {
 	Email    string `json:"email"`
 	Telefone string `json:"telefone"`
 	Endereco string `json:"endereco"`
+}
+
+func (u Usuario) Validar() error {
+	if u.Nome == "" {
+		return fmt.Errorf("nome não pode ser vazio")
+	}
+	if u.Email == "" {
+		return fmt.Errorf("email não pode ser vazio")
+	}
+	if u.Senha == "" {
+		return fmt.Errorf("senha não pode ser vazia")
+	}
+	return nil
 }
 
 func CriaUsuario(usuario Usuario) error {
