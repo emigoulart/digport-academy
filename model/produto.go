@@ -24,9 +24,10 @@ var descricao, imagem string
 var quantidade int
 
 func BuscaTodosProdutos() []Produto {
+	db := db.ConectaBancoDados()
+	defer db.Close()
 
-	resultado, err := db.DB.Query("SELECT * FROM produtos")
-
+	resultado, err := db.Query("SELECT * FROM produtos")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -34,7 +35,6 @@ func BuscaTodosProdutos() []Produto {
 	produtos := []Produto{}
 
 	for resultado.Next() {
-
 		err = resultado.Scan(&id, &nome, &preco, &descricao, &imagem, &quantidade)
 		if err != nil {
 			panic(err.Error())
@@ -43,15 +43,14 @@ func BuscaTodosProdutos() []Produto {
 
 		produtos = append(produtos, produto)
 	}
-	defer db.DB.Close()
 	return produtos
-
 }
 
 func BuscaProdutoPorNome(nomeProduto string) Produto {
+	db := db.ConectaBancoDados()
+	defer db.Close()
 
-	res := db.DB.QueryRow("SELECT * FROM produtos where nome = $1", nomeProduto)
-	defer db.DB.Close()
+	res := db.QueryRow("SELECT * FROM produtos where nome = $1", nomeProduto)
 
 	err := res.Scan(&id, &nome, &preco, &descricao, &imagem, &quantidade)
 	if err == sql.ErrNoRows {
@@ -64,7 +63,6 @@ func BuscaProdutoPorNome(nomeProduto string) Produto {
 	var produto1 = populaProduto()
 
 	return produto1
-
 }
 
 func populaProduto() Produto {
@@ -94,9 +92,10 @@ func CriaProduto(prod Produto) error {
 
 	strInsert := "INSERT INTO produtos VALUES($1, $2, $3, $4, $5, $6)"
 
-	result, err := db.DB.Exec(strInsert, id, nome, strconv.FormatFloat(preco, 'f', 1, 64), descricao, imagem, strconv.Itoa(quantidade))
+	db := db.ConectaBancoDados()
+	defer db.Close()
 
-	defer db.DB.Close()
+	result, err := db.Exec(strInsert, id, nome, strconv.FormatFloat(preco, 'f', 1, 64), descricao, imagem, strconv.Itoa(quantidade))
 
 	if err != nil {
 		panic(err.Error())
@@ -116,12 +115,13 @@ func produtoCadastrado(nomeProduto string) bool {
 	prod := BuscaProdutoPorNome(nomeProduto)
 
 	return prod.Nome == nomeProduto
-
 }
 
 func RemoveProduto(id string) error {
+	db := db.ConectaBancoDados()
+	defer db.Close()
 
-	result, err := db.DB.Exec("DELETE FROM produtos WHERE id = $1", id)
+	result, err := db.Exec("DELETE FROM produtos WHERE id = $1", id)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -130,6 +130,7 @@ func RemoveProduto(id string) error {
 		panic(err.Error())
 	}
 
+	fmt.Println("id: ", id)
 	if rowsAffected == 0 {
 		return fmt.Errorf("produto não encontrado")
 	}
@@ -140,6 +141,8 @@ func RemoveProduto(id string) error {
 }
 
 func UpdateProduto(prod Produto) error {
+	db := db.ConectaBancoDados()
+	defer db.Close()
 
 	id := prod.ID
 	nome := prod.Nome
@@ -148,8 +151,7 @@ func UpdateProduto(prod Produto) error {
 	//imagem := prod.Imagem
 	//quantidade := prod.QuantidadeEmEstoque
 
-	result, err := db.DB.Exec("UPDATE produtos SET nome= $1, descricao= $2 where id= $3", nome, descricao, id)
-	defer db.DB.Close()
+	result, err := db.Exec("UPDATE produtos SET nome= $1, descricao= $2 where id= $3", nome, descricao, id)
 	if err != nil {
 		panic(err.Error())
 	}
