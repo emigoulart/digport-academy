@@ -50,7 +50,7 @@ func BuscaProdutoPorNome(nomeProduto string) Produto {
 	db := db.ConectaBancoDados()
 	defer db.Close()
 
-	res := db.QueryRow("SELECT * FROM produto where nome = $1", nomeProduto)
+	res := db.QueryRow("SELECT * FROM produtos where nome = $1", nomeProduto)
 
 	err := res.Scan(&id, &nome, &preco, &descricao, &imagem, &quantidade)
 	if err == sql.ErrNoRows {
@@ -90,7 +90,7 @@ func CriaProduto(prod Produto) error {
 	imagem := prod.Imagem
 	quantidade := prod.QuantidadeEmEstoque
 
-	strInsert := "INSERT INTO produto VALUES($1, $2, $3, $4, $5, $6)"
+	strInsert := "INSERT INTO produtos VALUES($1, $2, $3, $4, $5, $6)"
 
 	db := db.ConectaBancoDados()
 	defer db.Close()
@@ -121,7 +121,7 @@ func RemoveProduto(id string) error {
 	db := db.ConectaBancoDados()
 	defer db.Close()
 
-	result, err := db.Exec("DELETE FROM produto WHERE id = $1", id)
+	result, err := db.Exec("DELETE FROM produtos WHERE id = $1", id)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -151,7 +151,7 @@ func UpdateProduto(prod Produto) error {
 	//imagem := prod.Imagem
 	//quantidade := prod.QuantidadeEmEstoque
 
-	result, err := db.Exec("UPDATE produto SET nome= $1, descricao= $2 where id= $3", nome, descricao, id)
+	result, err := db.Exec("UPDATE produtos SET nome= $1, descricao= $2 where id= $3", nome, descricao, id)
 	if err != nil {
 		panic(err.Error())
 	}

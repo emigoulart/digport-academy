@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/emigoulart/digport-academy/db"
@@ -50,4 +51,30 @@ func CriaUsuario(usuario Usuario) error {
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
+}
+
+func ValidaLogin(hash string, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err != nil {
+		return fmt.Errorf("invalid password")
+	}
+	return nil
+}
+
+func BuscaUsuarioPorEmail(email string) (*Usuario, error) {
+	db := db.ConectaBancoDados()
+	defer db.Close()
+
+	var usuario Usuario
+	err := db.QueryRow("SELECT id, nome, senha, email, telefone, endereco FROM usuario WHERE email = $1", email).Scan(
+		&usuario.ID, &usuario.Nome, &usuario.Senha, &usuario.Email, &usuario.Telefone, &usuario.Endereco,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("no user found with email %s", email)
+		}
+		return nil, err
+	}
+
+	return &usuario, nil
 }

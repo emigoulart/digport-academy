@@ -40,13 +40,13 @@ func criaTabelas() {
 	_, err := db.Exec(createUsersTable)
 
 	if err != nil {
-		panic("Erro ao criar tabela usuário")
+		panic(err.Error())
 	} else {
 		fmt.Println("Tabela usuário criada")
 	}
 
 	createProductsTableScript := `
-	CREATE TABLE IF NOT EXISTS produto
+	CREATE TABLE IF NOT EXISTS produtos
 	(
     id varchar primary key,
     nome varchar,
@@ -58,7 +58,7 @@ func criaTabelas() {
 
 	_, err = db.Exec(createProductsTableScript)
 	if err != nil {
-		panic("Erro ao criar tabela produto")
+		panic("Erro ao criar tabela produtos")
 	} else {
 		fmt.Println("Tabela produto criada")
 	}
