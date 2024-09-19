@@ -17,8 +17,8 @@ func HandleRequests() {
 
 //Usuario
 	route.HandleFunc("/usuarios", controllers.CriarUsuarioHandler).Methods("POST")
-	route.HandleFunc("/usuarios",controllers.BuscaUsuarioPorEmail).Methods("GET")
-	route.HandleFunc("/usuarios/login",controllers.LoginHandler).Methods("POST")
+	//route.HandleFunc("/usuarios",controllers.BuscaUsuarioPorEmail).Methods("GET")
+	//route.HandleFunc("/usuarios/login",controllers.LoginHandler).Methods("POST")
 
 	http.ListenAndServe(":8085", route)
 }

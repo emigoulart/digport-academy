@@ -71,7 +71,7 @@ func BuscaUsuarioPorEmail(email string) (*Usuario, error) {
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("no user found with email %s", email)
+			return nil, fmt.Errorf("Usuario não encontrado %s", email)
 		}
 		return nil, err
 	}
