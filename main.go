@@ -1,10 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
+import "github.com/emigoulart/digport-academy/db"
 
 func main() {
-	fmt.Println("Bem vindo(a) à loja DigPort!")
-	fmt.Printf("Esse é o catálogo de produtos disponíveis:\n%+v\n", criaEstoque())
+	db.InitDB()
+	StartServer()
 }
