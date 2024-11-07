@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -27,7 +28,7 @@ func BuscaTodosProdutos() []Produto {
 	db := db.ConectaBancoDados()
 	defer db.Close()
 
-	resultado, err := db.Query("SELECT * FROM produto")
+	resultado, err := db.Query("SELECT * FROM produtos")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -63,6 +64,25 @@ func BuscaProdutoPorNome(nomeProduto string) Produto {
 	var produto1 = populaProduto()
 
 	return produto1
+}
+
+func BuscaProdutoPorId(id string) (Produto, error) {
+	db := db.ConectaBancoDados()
+	defer db.Close()
+
+	res := db.QueryRow("SELECT * FROM produtos where id = $1", id)
+
+	err := res.Scan(&id, &nome, &preco, &descricao, &imagem, &quantidade)
+	if errors.Is(err, sql.ErrNoRows) {
+		fmt.Printf("Produto não encontrado %s\n", id)
+
+	} else if err != nil {
+		return Produto{}, err
+	}
+
+	var produto1 = populaProduto()
+
+	return produto1, nil
 }
 
 func populaProduto() Produto {

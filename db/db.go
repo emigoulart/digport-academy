@@ -60,6 +60,6 @@ func criaTabelas() {
 	if err != nil {
 		panic("Erro ao criar tabela produtos")
 	} else {
-		fmt.Println("Tabela produto criada")
+		fmt.Println("Tabela produtos criada")
 	}
 }

@@ -11,6 +11,8 @@ func HandleRequests() {
 	route := mux.NewRouter()
 	route.HandleFunc("/produtos", controllers.BuscaProdutosHandler).Methods("GET")
 	//route.HandleFunc("/produto", controllers.BuscaProdutoPorNomeHandler).Methods("GET")
+	route.HandleFunc("/produto/{id}", controllers.BuscaProdutoPorIdHandler).Methods("GET")
+	//route.Handle("/produto/{id}", controllers.AuthMiddleware(http.HandlerFunc(controllers.BuscaProdutoPorIdHandler))).Methods("GET")
 	route.Handle("/produto", controllers.AuthMiddleware(http.HandlerFunc(controllers.BuscaProdutoPorNomeHandler))).Methods("GET")
 
 	route.HandleFunc("/produto", controllers.CriaProdutoHandler).Methods("POST")
@@ -22,5 +24,5 @@ func HandleRequests() {
 	route.HandleFunc("/usuarios", controllers.BuscaUsuarioPorEmail).Methods("GET")
 	route.HandleFunc("/usuarios/login", controllers.LoginHandler).Methods("POST")
 
-	http.ListenAndServe(":8085", route)
+	http.ListenAndServe(":8080", route)
 }

@@ -24,17 +24,31 @@ func BuscaProdutoPorNomeHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func BuscaProdutoPorIdHandler(w http.ResponseWriter, r *http.Request) {
+	// http://localhost:8080/produto/{id}
+	fmt.Print("BuscaProdutoPorIdHandler")
+	vars := mux.Vars(r)
+	id := vars["id"]
+	produto, err := model.BuscaProdutoPorId(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(produto)
+
+}
+
 func CriaProdutoHandler(w http.ResponseWriter, r *http.Request) {
 	var produto model.Produto
 	json.NewDecoder(r.Body).Decode(&produto)
 
-	error := model.CriaProduto(produto)
-	if error != nil {
+	err := model.CriaProduto(produto)
+	if err != nil {
+		fmt.Print(err)
 		w.WriteHeader(http.StatusBadRequest)
-	} else {
-		w.WriteHeader(http.StatusCreated)
+		return
 	}
-
+	w.WriteHeader(http.StatusCreated)
 }
 
 func RemoveProdutoHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,9 +58,9 @@ func RemoveProdutoHandler(w http.ResponseWriter, r *http.Request) {
 	// the function should return a status code 204 if the product was removed successfully, no content
 	// or a status code 404 if the product was not found
 	id := mux.Vars(r)["id"]
-	error := model.RemoveProduto(id)
-	if error != nil {
-		fmt.Print(error)
+	err := model.RemoveProduto(id)
+	if err != nil {
+		fmt.Print(err)
 		w.WriteHeader(http.StatusNotFound)
 	} else {
 		w.WriteHeader(http.StatusNoContent)
@@ -57,13 +71,13 @@ func AtualizaProdutoHandler(w http.ResponseWriter, r *http.Request) {
 	// implementation of AtualizaProdutoHandler
 	var produto model.Produto
 	json.NewDecoder(r.Body).Decode(&produto)
-	error := model.UpdateProduto(produto)
-	if error != nil {
-		fmt.Print(error)
+	err := model.UpdateProduto(produto)
+	if err != nil {
+		fmt.Print(err)
 		w.WriteHeader(http.StatusNotFound)
-	} else {
-		fmt.Println(produto.ID)
-		w.WriteHeader(http.StatusOK)
+		return
 	}
+	fmt.Println(produto.ID)
+	w.WriteHeader(http.StatusOK)
 
 }
